@@ -1,33 +1,33 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[2]:
+# In[1]:
 
 
 import numpy as np
 import pandas as pd
 
 
-# In[3]:
+# In[2]:
 
 
 dataset=pd.read_csv("train_loan.csv")
 data1=pd.read_csv("test_loan.csv")
 
 
-# In[4]:
+# In[3]:
 
 
 dataset
 
 
-# In[5]:
+# In[4]:
 
 
 dataset.isnull().sum()
 
 
-# In[6]:
+# In[5]:
 
 
 #replacing null values
@@ -40,7 +40,7 @@ dataset['Loan_Amount_Term'].fillna(value=180,inplace=True)
 dataset['Credit_History'].fillna(value=0,inplace=True)
 
 
-# In[7]:
+# In[6]:
 
 
 #encoding categorical data
@@ -53,27 +53,27 @@ dataset['Loan_Status'] = dataset['Loan_Status'].replace(['N','Y'],[0,1])
 dataset['Dependents'] = dataset['Dependents'].replace(["3+"],[4])
 
 
-# In[8]:
+# In[7]:
 
 
 dataset
 
 
-# In[9]:
+# In[8]:
 
 
 X=dataset.drop(columns=['Loan_ID','Loan_Status'])
 X
 
 
-# In[10]:
+# In[9]:
 
 
 y=dataset[['Loan_Status']]
-y
+y=y.iloc[:,:].values
 
 
-# In[11]:
+# In[10]:
 
 
 #selecting best features
@@ -87,25 +87,25 @@ for i in range(len(fs.scores_)):
 	print('Feature %d: %f' % (i, fs.scores_[i]))
 
 
-# In[12]:
+# In[11]:
 
 
 X.head()
 
 
-# In[13]:
+# In[12]:
 
 
 X=X.drop(columns=['Gender','Dependents','Education','Self_Employed','Loan_Amount_Term','Property_Area'])
 
 
+# In[13]:
+
+
+X=X.iloc[:,:].values
+
+
 # In[14]:
-
-
-X
-
-
-# In[15]:
 
 
 #splitting into training and test sets
@@ -113,18 +113,18 @@ from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25,random_state=42)
 
 
-# In[16]:
+# In[20]:
 
 
 #model
 from sklearn.linear_model import LogisticRegression
 classifier=LogisticRegression()
-classifier.fit(X_train,y_train.values.ravel())
+classifier.fit(X_train,y_train.ravel())
 #predicting
 y_pred = classifier.predict(X_test)
 
 
-# In[17]:
+# In[21]:
 
 
 #confusion matrix
@@ -133,14 +133,42 @@ cm = confusion_matrix(y_test, y_pred)
 cm
 
 
-# In[18]:
+# In[22]:
 
 
-print("Accuracy for training set:",classifier.score(X_train,y_train)*100,"%")
-print("Accuracy for test set:",classifier.score(X_test,y_test)*100,"%")
+#Accuracy
+from sklearn.metrics import accuracy_score
+acc = accuracy_score(y_test, y_pred)
+acc
 
 
-# In[19]:
+# In[23]:
+
+
+tp=cm[0][0]
+fp=cm[0][1]
+tn=cm[1][1]
+fn=cm[1][0]
+precision=tp/(tp+fp)
+precision
+
+
+# In[24]:
+
+
+recall=tp/(tp+fn)
+recall
+
+
+# In[25]:
+
+
+#F1 = 2 * (precision * recall) / (precision + recall)
+from sklearn.metrics import f1_score
+f1_score(y_test, y_pred, zero_division=1)
+
+
+# In[26]:
 
 
 print("Please enter the following details:\n")
@@ -157,7 +185,7 @@ credithistory=int(input("Please enter 0/1 if no credit history/credit history:\n
 propertyarea=int(input("Please enter 0/1/2 if you live in urban/semiurban/rural area:\n"))
 
 
-# In[21]:
+# In[27]:
 
 
 new_input=np.array([married,income,coincome,loanamount,credithistory]).reshape(1,-1)
