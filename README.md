@@ -3,6 +3,6 @@ A Machine Learning based project that will classify if the user can take a loan 
 
 This project can be deployed on localhost using flask.
 
-Go to 127.0.0.1:5000 in your browser after running flask_api.py to check the running aplication.
+Go to 127.0.0.1:5000 in your browser after running flask_api1.py to check the running aplication.
 
 Used Kaggle’s loan prediction dataset. 
